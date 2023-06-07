@@ -1,9 +1,7 @@
 import argparse
 import pybiopax
 import networkx as nx
-#import pydot
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
-from ontobio.rdfgen.gocamgen.gocamgen import AssocGoCamModel
 import pprint
 from base import relations
 
@@ -18,7 +16,6 @@ def main():
         gocam.process_pathway(pathway)
     pprint.pp(nx.to_dict_of_dicts(gocam))
     print(gocam.mf_map)
-
 
 
 def parse_arguments():
