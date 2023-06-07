@@ -1,15 +1,37 @@
+import argparse
 import pybiopax
 import networkx as nx
 #import pydot
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
+from ontobio.rdfgen.gocamgen.gocamgen import AssocGoCamModel
 import pprint
 from base import relations
 
-biopax_file = './resources/test_biopax/R-HSA-204174_level3.owl'
-model = pybiopax.model_from_owl_file(biopax_file, encoding="utf8")
+def main():
+    parser = parse_arguments()
+    bp_file =  parser.bp_file
+
+    model = pybiopax.model_from_owl_file(bp_file, encoding="utf8")
+
+    gocam = GoCAM(model)
+    for pathway in model.get_objects_by_type(pybiopax.biopax.Pathway):
+        gocam.process_pathway(pathway)
+    pprint.pp(nx.to_dict_of_dicts(gocam))
+    print(gocam.mf_map)
+
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Loads pmids',
+                                     epilog='It works!')
+    parser.add_argument('-i', dest='bp_file', required=True,
+                         help='Biopax File')
+
+    return parser.parse_args()
 
 class GoCAM (AnnotationSubgraph):
-    def __init__(self):
+    def __init__(self, model):
+        self.model = model
         self.bp_node = None
         self.mf_map = {}
         super().__init__()
@@ -28,10 +50,10 @@ class GoCAM (AnnotationSubgraph):
     
     def process_step_processes(self, step_processes, pathway):
         for obj in step_processes:
-            pc = model.objects[obj.uid]
+            pc = self.model.objects[obj.uid]
             for sp in pc.step_process:
                 if isinstance(sp, pybiopax.biopax.Catalysis) and sp.control_type == 'ACTIVATION':
-                    self.process_mf(sp.xref, model.objects[sp.uid])
+                    self.process_mf(sp.xref, self.model.objects[sp.uid])
    
     
     def process_components(self, components, pathway):
@@ -49,7 +71,7 @@ class GoCAM (AnnotationSubgraph):
             gp = self.add_instance_of_class(obj.display_name)
             self.add_edge(mf, relations['enabled_by'], gp)
 
-            pc = model.objects[obj.uid]
+            pc = self.model.objects[obj.uid]
 
             if pc.left:
                 self.process_mols(pc.left, relations['has_input'], mf)
@@ -80,9 +102,5 @@ class GoCAM (AnnotationSubgraph):
     def process_cc(self, xrefs): 
         pass
                         
-            
-gocam = GoCAM()
-for pathway in model.get_objects_by_type(pybiopax.biopax.Pathway):
-    gocam.process_pathway(pathway)
-pprint.pp(nx.to_dict_of_dicts(gocam))
-print(gocam.mf_map)
+if __name__ == '__main__' :
+    main()
