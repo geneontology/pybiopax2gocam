@@ -2,3 +2,5 @@ pybiopax
 jupyterlab
 pandas
 ontobio
+tabulate
+linkml
