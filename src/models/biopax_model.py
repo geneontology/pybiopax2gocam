@@ -8,7 +8,7 @@ class Biopax:
 @dataclass
 class Pathway:
     id: Optional[str] = None
-    label: Optional[str] = None
+    biological_process: Optional['BiologicalProcess'] = None
     reactions: List['Reaction'] = field(default_factory=list)
     relationships: List['Relationship'] = field(default_factory=list)
 
@@ -16,8 +16,7 @@ class Pathway:
 class Reaction:
     id: Optional[str] = ''
     gene_product: Optional['BiologicalProcess'] = None
-    molecular_function: Optional['MolecularFunction'] = None
-    biological_process: Optional['BiologicalProcess'] = None
+    molecular_function: Optional['MolecularFunction'] = None    
     cellular_component: Optional['CellularComponent'] = None
     has_inputs: List['GeneProduct'] = field(default_factory=list)
     has_outputs: List['GeneProduct'] = field(default_factory=list)

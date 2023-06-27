@@ -1,6 +1,7 @@
 import json
 import os
 from dataclasses import asdict
+import pprint
 
 class BiopaxView:
     
@@ -9,8 +10,8 @@ class BiopaxView:
         
     def display_results(self, data):
         print("Processed BioPAX data:")
-        
-        print(self.to_json(data))
+        pprint.pp(data)
+        #print(self.to_json(data))
         
 
     def write_results(self, data, output_folder):

@@ -18,19 +18,21 @@ class ReactomeParser(BiopaxParser):
             
         return Biopax(pathways=pathways)
 
-    def _process_pathway(self, pathway):        
+    def _process_pathway(self, bpx_pathway):        
         
-        reaction = Reaction()
-        if pathway.xref:
-            reaction.biological_process = self._process_bp(pathway.xref)
-
-        if pathway.pathway_order:
-            self._process_step_processes(reaction, pathway.pathway_order)
+        pathway = Pathway()
         
-        if pathway.pathway_component:
-            self._process_components(reaction, pathway.pathway_component)
+        if bpx_pathway.xref:
+            pathway.biological_process = self._process_bp(bpx_pathway.xref)
+        
+        #still figuring this part
+        if bpx_pathway.pathway_order:
+            self._process_step_processes(pathway, bpx_pathway.pathway_order)
+        
+        if bpx_pathway.pathway_component:
+            pathway.reactions = self._process_components(pathway, bpx_pathway.pathway_component)
             
-        return reaction
+        return pathway
                 
     
     def _process_step_processes(self, reaction, step_processes):
@@ -42,8 +44,10 @@ class ReactomeParser(BiopaxParser):
    
     
     def _process_components(self, reaction:Reaction, components):
+        reactions = list()
+        
         for obj in components:
-
+            reaction = Reaction
             reaction.gene_product = GeneProduct(id=obj.display_name)
            
             pc = self.model.objects[obj.uid]
@@ -54,8 +58,11 @@ class ReactomeParser(BiopaxParser):
 
                 if pc.right:
                     reaction.has_output = self._process_mols(pc.right)
-                
-                                        
+            
+            reactions.append(reaction)
+        
+        return reactions
+                                    
     def process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
         for xref in xrefs:
             if xref.db == 'GENE ONTOLOGY':
