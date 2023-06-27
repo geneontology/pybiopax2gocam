@@ -1,13 +1,20 @@
-from src.models.processing_strategy import ProcessingStrategy
+import pprint
 from ontobio.rdfgen.gocamgen.subgraphs import AnnotationSubgraph
+import networkx as nx
 from base import relations
+from src.views.biopax_view import BiopaxView
 
-class GOcamGenView(AnnotationSubgraph):
-    def __init__(self):
-        super().__init__()
+class GoCAMGenView(BiopaxView):
+    def __init__(self, model):
+        self.graph = AnnotationSubgraph()
+        super().__init__(model)
         
-    def convert(self, biopax_obj):
-        self._convert_pathways(biopax_obj.pathways)
+    def convert(self):
+        self._convert_pathways(self.model.pathways)
+        return self.graph
+    
+    def display_results(self):
+        pprint.pp(nx.to_dict_of_dicts(self.graph))
 
     def _convert_pathways(self, pathways):
         for pathway in pathways:
@@ -30,8 +37,8 @@ class GOcamGenView(AnnotationSubgraph):
         self._add_term_edge(mf, relations['part_of'], bp)   
         self._add_term_edge(mf, relations['occurs_in'], cc)           
       
-        self._convert_small_mols(mf, relations['ha_input'], reaction.has_inputs)
-        self._convert_small_mols(mf, relations['ha_output'], reaction.has_outputs)
+        self._convert_small_mols(mf, relations['has_input'], reaction.has_inputs)
+        self._convert_small_mols(mf, relations['has_output'], reaction.has_outputs)
         
 
     def _convert_small_mols(self,  mf, relation, small_mols,):
@@ -42,10 +49,10 @@ class GOcamGenView(AnnotationSubgraph):
 
     def _convert_object(self, obj, is_anchor=False):
         if obj and obj.id:
-            return self.add_instance_of_class(obj.id, is_anchor)
+            return self.graph.add_instance_of_class(obj.id, is_anchor)
           
     def _add_term_edge(self, source, relation, target):
         if source and target:
-            self.add_edge(source, relation, target)
+            self.graph.add_edge(source, relation, target)
         
         return None

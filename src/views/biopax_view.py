@@ -4,17 +4,14 @@ from dataclasses import asdict
 import pprint
 
 class BiopaxView:
+    def __init__(self, model):
+        self.model = model
     
-    def to_json(self, obj):
-            return json.dumps(asdict(obj), indent=2)
         
-    def display_results(self, data):
-        print("Processed BioPAX data:")
-        #pprint.pp(asdict(data))
-        print(self.to_json(data))
-        
-
-    def write_results(self, data, output_folder):
+    def display_results(self):
+        raise NotImplementedError
+          
+    def save(self, data, output_folder):
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
 
