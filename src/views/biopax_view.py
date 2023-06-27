@@ -10,8 +10,8 @@ class BiopaxView:
         
     def display_results(self, data):
         print("Processed BioPAX data:")
-        pprint.pp(data)
-        #print(self.to_json(data))
+        #pprint.pp(asdict(data))
+        print(self.to_json(data))
         
 
     def write_results(self, data, output_folder):

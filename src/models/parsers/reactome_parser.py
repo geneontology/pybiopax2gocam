@@ -20,14 +20,13 @@ class ReactomeParser(BiopaxParser):
 
     def _process_pathway(self, bpx_pathway):        
         
-        pathway = Pathway()
+        pathway = Pathway(uid = bpx_pathway.uid)
         
         if bpx_pathway.xref:
             pathway.biological_process = self._process_bp(bpx_pathway.xref)
         
-        #still figuring this part
         if bpx_pathway.pathway_order:
-            self._process_step_processes(pathway, bpx_pathway.pathway_order)
+            self._process_step_processes(bpx_pathway.pathway_order)
         
         if bpx_pathway.pathway_component:
             pathway.reactions = self._process_components(pathway, bpx_pathway.pathway_component)
@@ -35,7 +34,7 @@ class ReactomeParser(BiopaxParser):
         return pathway
                 
     
-    def _process_step_processes(self, reaction, step_processes):
+    def _process_step_processes(self, step_processes):
         for obj in step_processes:
             pc = self.model.objects[obj.uid]
             for sp in pc.step_process:
@@ -46,29 +45,33 @@ class ReactomeParser(BiopaxParser):
     def _process_components(self, reaction:Reaction, components):
         reactions = list()
         
-        for obj in components:
-            reaction = Reaction
-            reaction.gene_product = GeneProduct(id=obj.display_name)
+        for bpx_reaction in components:
+            mf_id = self.mf_map.get(bpx_reaction.uid, None)
+            
+            if not isinstance(bpx_reaction, pybiopax.biopax.BiochemicalReaction):
+                continue
+            
+            reaction = Reaction(uid=bpx_reaction.uid)
+            reaction.gene_product = GeneProduct(id=bpx_reaction.display_name)
+            reaction.molecular_function = MolecularFunction(id = mf_id)
            
-            pc = self.model.objects[obj.uid]
+            pc = self.model.objects[bpx_reaction.uid]
 
-            if isinstance(pc, pybiopax.biopax.BiochemicalReaction):
-                if pc.left:
-                    reaction.has_input = self._process_mols(pc.left)
+            if pc.left:
+                reaction.has_inputs = self._process_mols(pc.left)
 
-                if pc.right:
-                    reaction.has_output = self._process_mols(pc.right)
+            if pc.right:
+                reaction.has_outputs = self._process_mols(pc.right)
             
             reactions.append(reaction)
         
         return reactions
+    
                                     
     def process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
         for xref in xrefs:
             if xref.db == 'GENE ONTOLOGY':
-                self.mf_map[catalysis.controlled.uid] = xref.id
-
-                return MolecularFunction(id = xref.id, reaction_id=catalysis.controlled.uid)
+                self.mf_map[catalysis.controlled.uid] = xref.id                
                 
                 
     def _process_bp(self, xrefs)->BiologicalProcess:
@@ -90,3 +93,5 @@ class ReactomeParser(BiopaxParser):
     
     def _process_cc(self, xrefs): 
         pass
+
+    

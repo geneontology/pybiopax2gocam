@@ -7,14 +7,14 @@ class Biopax:
 
 @dataclass
 class Pathway:
-    id: Optional[str] = None
+    uid: Optional[str] = None
     biological_process: Optional['BiologicalProcess'] = None
     reactions: List['Reaction'] = field(default_factory=list)
     relationships: List['Relationship'] = field(default_factory=list)
 
 @dataclass
 class Reaction:
-    id: Optional[str] = ''
+    uid: Optional[str] = ''
     gene_product: Optional['BiologicalProcess'] = None
     molecular_function: Optional['MolecularFunction'] = None    
     cellular_component: Optional['CellularComponent'] = None
@@ -36,7 +36,6 @@ class BiologicalProcess:
 class MolecularFunction:
     id: str
     label: Optional[str] = None
-    reaction_id: Optional[str] = None
 
 @dataclass
 class GeneProduct:
@@ -45,7 +44,6 @@ class GeneProduct:
 
 @dataclass
 class SmallMol:
-    reaction_id: Optional[str] = None
     id: Optional[str] = None
     label: Optional[str] = None
 
