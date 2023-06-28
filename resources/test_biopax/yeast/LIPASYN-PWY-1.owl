@@ -1005,19 +1005,8 @@ There are two variations of the molecular structure, since either an end carbon 
                 <bp:physicalEntity>
                   <bp:SmallMolecule rdf:ID="SmallMolecule26368">
                     <bp:dataSource rdf:resource="#Provenance26236"/>
-                    <bp:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The phosphorylated derivatives of |FRAME: L-1-phosphatidyl-inositols &quot;phosphatidylinositol&quot;| (PtdIns), collectively called phosphoinositides (PIs), are eukaryotic cell membrane phospholipids whose inositol head group is phosphorylated at position D3, D4, or D5, singly or in all combinations, to yield seven PI metabolites.
-
-
-The seven phosphoinositides found in animals include:
-
-Phosphatidylinositol monophosphates: |FRAME: CPD-177|, |FRAME: CPD-1108| and |FRAME: 1-PHOSPHATIDYL-1D-MYO-INOSITOL-5-PHOSPHA|.
-
-Phosphatidylinositol bisphophosphates: |FRAME: 1-PHOSPHATIDYL-1D-MYO-INOSITOL-34-BISPH|, |FRAME: 1-PHOSPHATIDYL-1D-MYO-INOSITOL-35-BISPH|, and |FRAME: PHOSPHATIDYL-MYO-INOSITOL-45-BISPHOSPHA|.
-
-Phosphatidylinositol trisphophosphate: |FRAME: PHOSPHATIDYLINOSITOL-345-TRIPHOSPHATE|.
-
-|FRAME: PHOSPHATIDYL-MYO-INOSITOL-45-BISPHOSPHA| is present at the plasma membrane and is a key regulator of actin remodelling and endocytosis, in addition to its role as a precursor to second messengers |CITS: [18774718]|.
-It recruits and/or regulates several proteins that are implicated in the first step of endocytosis, including the clathrin adaptor complex AP-2 and the large GTPase dynamin |CITS: [12119359]|.</bp:comment>
+                    <bp:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
+                    </bp:comment>
                     <bp:xref>
                       <bp:RelationshipXref rdf:ID="RelationshipXref26369">
                         <bp:id rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PHOSPHATIDYL-MYO-INOSITOL-45-BISPHOSPHA</bp:id>
@@ -1062,19 +1051,8 @@ It recruits and/or regulates several proteins that are implicated in the first s
                         <bp:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1,2-Diacyl-sn-glycero-3-phospho-(1&apos;-myo-inositol-4&apos;,5&apos;-bisphosphate</bp:name>
                         <bp:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PIP2</bp:name>
                         <bp:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Phosphatidylinositol-4,5-bisphosphate</bp:name>
-                        <bp:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">The phosphorylated derivatives of |FRAME: L-1-phosphatidyl-inositols &quot;phosphatidylinositol&quot;| (PtdIns), collectively called phosphoinositides (PIs), are eukaryotic cell membrane phospholipids whose inositol head group is phosphorylated at position D3, D4, or D5, singly or in all combinations, to yield seven PI metabolites.
-
-
-The seven phosphoinositides found in animals include:
-
-Phosphatidylinositol monophosphates: |FRAME: CPD-177|, |FRAME: CPD-1108| and |FRAME: 1-PHOSPHATIDYL-1D-MYO-INOSITOL-5-PHOSPHA|.
-
-Phosphatidylinositol bisphophosphates: |FRAME: 1-PHOSPHATIDYL-1D-MYO-INOSITOL-34-BISPH|, |FRAME: 1-PHOSPHATIDYL-1D-MYO-INOSITOL-35-BISPH|, and |FRAME: PHOSPHATIDYL-MYO-INOSITOL-45-BISPHOSPHA|.
-
-Phosphatidylinositol trisphophosphate: |FRAME: PHOSPHATIDYLINOSITOL-345-TRIPHOSPHATE|.
-
-|FRAME: PHOSPHATIDYL-MYO-INOSITOL-45-BISPHOSPHA| is present at the plasma membrane and is a key regulator of actin remodelling and endocytosis, in addition to its role as a precursor to second messengers |CITS: [18774718]|.
-It recruits and/or regulates several proteins that are implicated in the first step of endocytosis, including the clathrin adaptor complex AP-2 and the large GTPase dynamin |CITS: [12119359]|.</bp:comment>
+                        <bp:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
+                        </bp:comment>
                       </bp:SmallMoleculeReference>
                     </bp:entityReference>
                     <bp:cellularLocation rdf:resource="#CellularLocationVocabulary26240"/>
@@ -1141,8 +1119,6 @@ It recruits and/or regulates several proteins that are implicated in the first s
     <bp:xref rdf:resource="#UnificationXref26235"/>
     <bp:standardName rdf:datatype="http://www.w3.org/2001/XMLSchema#string">phospholipids degradation</bp:standardName>
     <bp:name rdf:datatype="http://www.w3.org/2001/XMLSchema#string">phospholipases</bp:name>
-    <bp:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In addition to being a primary structural components of cell membranes, phospholipids may also be thought of as a reservoir of signaling molecules. Hydrolysis of phosphatidylinositol 4,5-biphosphate (PIP2) by phospholipase C, for instance, generates the signaling molecules inositol triphosphate (IP3) and diacylglycerol (DAG). &lt;i&gt;S. cerevisiae&lt;/i&gt; catalyzes this reaction via Plc1p, a phosphatidylinositol-specific phospholipase C involved in a variety of biological processes including nutrient sensing and filamentous growth. On the other hand, degradation of phosphatidylcholine (PC) by phospholipase D (Spo14p) yields phosphatidic acid and choline; this activity generates PA required for sporulation in &lt;i&gt;S. cerevisiae&lt;/i&gt;. A phospholipase C specific for PC has yet to be identified in &lt;i&gt;S. cerevisiae&lt;/i&gt;, however PC may also serve as substrate for phospholipases B (Plb1-3p and Nte1p), which hydrolyze PC to yield glycerophosphocholine (GPC) and two fatty acids. Both phospholipases B and D are thought to mediate PC turnover in yeast, and phospholipase B (as Plb1p) has also been implicated in acyl chain remodeling.
-
-References: |CITS:[11015615]||CITS: [23631861]||CITS: [22345606]||CITS: [14528019]||CITS: [11006294]|</bp:comment>
+    <bp:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></bp:comment>
   </bp:Pathway>
 </rdf:RDF>

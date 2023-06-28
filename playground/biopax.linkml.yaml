@@ -1,0 +1,85 @@
+id: biopax-parser
+name: Biopax Parser Model
+description: Model for parsing Biopax files
+
+classes:
+  - name: Biopax
+    description: Represents a Biopax file
+    slots:
+      - name: pathways
+        description: List of pathways in the Biopax file
+        range: Pathway
+        multivalued: true
+
+  - name: Pathway
+    slots:
+      - name: id
+        datatype: string
+      - name: label
+        datatype: string
+      - name: reactions
+        range: Reaction
+        multivalued: true
+      - name: relationships
+        range: Relationship
+        multivalued: true
+
+  - name: Reaction
+    description: reaction in the pathway
+    slots:
+      - name: id
+        datatype: string
+      - name: biological_process
+        range: BiologicalProcess
+      - name: molecular_function
+        range: MolecularFunction
+      - name: has_inputs
+        range: Molecule
+        multivalued: true
+      - name: has_outputs
+        range: Molecule
+        multivalued: true
+      - name: cellular_component
+        range: CellularComponent
+
+  - name: Relationship
+    description: Represents a relationship between reactions in the pathway
+    slots:
+      - name: source_reaction_id
+        datatype: string
+      - name: target_reaction_id
+        datatype: string
+      - name: relationship_type
+        datatype: string
+
+  - name: BiologicalProcess
+    description: Represents a biological process
+    slots:
+      - name: id
+        datatype: string
+      - name: label
+        datatype: string
+
+  - name: MolecularFunction
+    description: Represents a molecular function
+    slots:
+      - name: id
+        datatype: string
+      - name: label
+        datatype: string
+
+  - name: Molecule
+    description: Represents a molecule
+    slots:
+      - name: id
+        datatype: string
+      - name: label
+        datatype: string
+
+  - name: CellularComponent
+    description: Represents a cellular component
+    slots:
+      - name: id
+        datatype: string
+      - name: label
+        datatype: string

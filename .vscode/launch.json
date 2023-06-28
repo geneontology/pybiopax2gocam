@@ -4,6 +4,7 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "Python: Current File",
       "type": "python",
@@ -11,6 +12,23 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "justMyCode": true
-    }
+    },
+    {
+      "name": "Python: Debug Parser",
+      "type": "python",
+      "request": "launch",
+      "module": "src.controllers.biopax_controller",
+      "args": [
+          "-i",
+          "resources/test_biopax/reactome/R-HSA-204174_level3.owl",
+          "-t",
+          "reactome"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+      }
+  }
   ]
 }
