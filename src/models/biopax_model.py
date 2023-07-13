@@ -8,18 +8,27 @@ class Biopax:
 @dataclass
 class Pathway:
     uid: Optional[str] = None
-    biological_process: Optional['BiologicalProcess'] = None
+    title: Optional[str] = None
+    biological_process: Optional['Term'] = None
     reactions: List['Reaction'] = field(default_factory=list)
     relationships: List['Relationship'] = field(default_factory=list)
 
 @dataclass
 class Reaction:
     uid: Optional[str] = ''
-    gene_product: Optional['BiologicalProcess'] = None
-    molecular_function: Optional['MolecularFunction'] = None    
-    cellular_component: Optional['CellularComponent'] = None
-    has_inputs: List['GeneProduct'] = field(default_factory=list)
-    has_outputs: List['GeneProduct'] = field(default_factory=list)
+    controller: Optional['Term'] = None
+    molecular_function: Optional['Term'] = None
+    cellular_component: Optional['Term'] = None
+    has_inputs: List['Term'] = field(default_factory=list)
+    has_outputs: List['Term'] = field(default_factory=list)
+
+@dataclass
+class Term:
+    uid: Optional[str] = None
+    instance_id: Optional[str] = None
+    type: Optional[str] = None
+    id: Optional[str] = None
+    label: Optional[str] = None
 
 @dataclass
 class Relationship:
