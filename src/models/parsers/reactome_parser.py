@@ -52,7 +52,7 @@ class ReactomeParser(BiopaxParser):
                 continue
             
             reaction = Reaction(uid=bpx_reaction.uid)
-            reaction.gene_product = GeneProduct(id=bpx_reaction.display_name)
+            reaction.controller = GeneProduct(id=bpx_reaction.display_name)
             reaction.molecular_function = MolecularFunction(id = mf_id)
            
             pc = self.model.objects[bpx_reaction.uid]

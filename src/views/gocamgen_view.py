@@ -19,27 +19,25 @@ class GoCAMGenView(BiopaxView):
     def _convert_pathways(self, pathways):
         for pathway in pathways:
             self._convert_pathway(pathway)
-            
 
-    def _convert_pathway(self, pathway):        
-        self._convert_object(pathway.biological_process)
+    def _convert_pathway(self, pathway):
+        bp_node = self._convert_object(pathway.biological_process)
         for reaction in pathway.reactions:
-            self._convert_reaction(pathway, reaction)
-            
+            self._convert_reaction(pathway, reaction, bp_node)
 
-    def _convert_reaction(self, pathway, reaction):
-        bp = self._convert_object(pathway.biological_process)
+
+    def _convert_reaction(self, pathway, reaction, bp_node):
         mf = self._convert_object(reaction.molecular_function, is_anchor=True)
-        gp =  self._convert_object(reaction.gene_product)
+        gp =  self._convert_object(reaction.controller)
         cc = self._convert_object(reaction.cellular_component)
         
         self._add_term_edge(mf, relations['enabled_by'], gp)
-        self._add_term_edge(mf, relations['part_of'], bp)   
+        self._add_term_edge(mf, relations['part_of'], bp_node)
         self._add_term_edge(mf, relations['occurs_in'], cc)           
       
         self._convert_small_mols(mf, relations['has_input'], reaction.has_inputs)
         self._convert_small_mols(mf, relations['has_output'], reaction.has_outputs)
-        
+
 
     def _convert_small_mols(self,  mf, relation, small_mols,):
         for small_mol in small_mols:

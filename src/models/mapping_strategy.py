@@ -22,7 +22,7 @@ class MappingStrategy(ProcessingStrategy):
             
 
     def _map_reaction(self, reaction, id_map):
-        self._map_object(reaction.gene_product, id_map)
+        self._map_object(reaction.controller, id_map)
         self._map_object(reaction.molecular_function, id_map)
         self._map_object(reaction.cellular_component, id_map)
         self._map_small_mols(reaction.has_inputs, id_map)
