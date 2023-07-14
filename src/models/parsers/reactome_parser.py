@@ -1,6 +1,6 @@
 import typing
 import pybiopax
-from src.models.biopax_model import BiologicalProcess, Biopax, GeneProduct, MolecularFunction, Pathway, Reaction, SmallMol
+from src.models.biopax_model import Biopax, Pathway, Reaction, Term
 from src.models.parsers.biopax_parser import BiopaxParser
 
 
@@ -52,8 +52,8 @@ class ReactomeParser(BiopaxParser):
                 continue
             
             reaction = Reaction(uid=bpx_reaction.uid)
-            reaction.controller = GeneProduct(id=bpx_reaction.display_name)
-            reaction.molecular_function = MolecularFunction(id = mf_id)
+            reaction.controller = Term(id=bpx_reaction.display_name)
+            reaction.molecular_function = Term(id = mf_id)
            
             pc = self.model.objects[bpx_reaction.uid]
 
@@ -74,19 +74,19 @@ class ReactomeParser(BiopaxParser):
                 self.mf_map[catalysis.controlled.uid] = xref.id                
                 
                 
-    def _process_bp(self, xrefs)->BiologicalProcess:
+    def _process_bp(self, xrefs)->Term:
          
         for xref in xrefs:
             if xref.db == 'GENE ONTOLOGY':
-                return BiologicalProcess(id = xref.id)
+                return Term(id = xref.id)
         
         return None
                 
 
-    def _process_mols(self, mols)->typing.List[SmallMol]:
+    def _process_mols(self, mols)->typing.List[Term]:
         small_mols = list()
         for mol in mols:
-            small_mol = SmallMol(id=mol.display_name)
+            small_mol = Term(id=mol.display_name)
             small_mols.append(small_mol)
             
         return small_mols

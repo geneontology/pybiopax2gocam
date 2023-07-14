@@ -36,27 +36,5 @@ class Relationship:
     target_reaction_id: str
     relationship_type: str
 
-@dataclass
-class BiologicalProcess:
-    id: str
-    label: Optional[str] = None
-
-@dataclass
-class MolecularFunction:
-    id: str
-    label: Optional[str] = None
-
-@dataclass
-class GeneProduct:
-    id: str
-    label: Optional[str] = None
-
-@dataclass
-class SmallMol:
-    id: Optional[str] = None
-    label: Optional[str] = None
-
-@dataclass
-class CellularComponent:
     id: str
     label: Optional[str] = None
