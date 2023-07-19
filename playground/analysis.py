@@ -11,8 +11,8 @@ def main():
    
     model = pybiopax.model_from_owl_file(bp_file, encoding="utf8")
 
-    source_obj = model.objects['Pathway2']
-    target_obj = model.objects['Protein17']
+    source_obj = model.objects['Pathway1']
+    target_obj = model.objects['Control1']
 
     memo.clear()
     path = find_path_components(source_obj, target_obj)
@@ -120,5 +120,5 @@ if __name__ == '__main__' :
     main()
 
 
-#  python3 -m playground.parser_ideas -i ./resources/test_biopax/reactome/R-HSA-204174_level3.owl
+#  python3 -m playground.analysis -i ./resources/test_biopax/reactome/R-HSA-204174_level3.owl
 

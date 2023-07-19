@@ -54,6 +54,7 @@ class YamlView(BiopaxView):
                 }
 
                 slim_controller = {
+                    "control_type": [reaction.control_type] if reaction.control_type else [],
                     "controller": [reaction.controller.id] if reaction.controller else []
                 }
                 slim_reaction[reaction.uid].append(slim_controller)

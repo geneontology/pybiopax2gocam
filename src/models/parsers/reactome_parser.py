@@ -1,12 +1,14 @@
 import typing
 import pybiopax
+from collections import defaultdict
 from src.models.biopax_model import Biopax, Pathway, Reaction, Term
 from src.models.parsers.biopax_parser import BiopaxParser
 
 class ReactomeParser(BiopaxParser):    
     def __init__(self, model):
-        self.bp_node = None
-        self.mf_map = {}
+        self._bp_node = None
+        self._mf_map = {}
+        self._control_map = defaultdict(list)
         super().__init__(model)          
         
     def parse(self):        
@@ -38,20 +40,26 @@ class ReactomeParser(BiopaxParser):
             pc = self.model.objects[obj.uid]
             
             for sp in pc.step_process:
-                if isinstance(sp, pybiopax.biopax.Catalysis) and sp.control_type == 'ACTIVATION':
-                    self._process_mf(sp.xref, self.model.objects[sp.uid])
+                self.process_controller(sp)
+                if isinstance(sp, pybiopax.biopax.Catalysis):
+                    
+                    if sp.control_type == 'ACTIVATION':                    
+                        self._process_mf(sp.xref, self.model.objects[sp.uid])
    
     
     def _process_components(self, reaction:Reaction, components):
         reactions = list()
         
         for bpx_reaction in components:
-            mf_id = self.mf_map.get(bpx_reaction.uid, None)
             
             if not isinstance(bpx_reaction, pybiopax.biopax.BiochemicalReaction):
                 continue
             
-            reaction = Reaction(uid=bpx_reaction.uid)
+            mf_id = self._mf_map.get(bpx_reaction.uid, None)
+          
+                                   
+            reaction = Reaction(uid=bpx_reaction.uid)  
+            reaction.control_type = self._control_map.get(bpx_reaction.uid, None)
             reaction.controller = Term(id=bpx_reaction.display_name)
             reaction.molecular_function = Term(id = mf_id)
            
@@ -71,7 +79,7 @@ class ReactomeParser(BiopaxParser):
     def _process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
         for xref in xrefs:
             if xref.db == 'GENE ONTOLOGY':
-                self.mf_map[catalysis.controlled.uid] = xref.id                
+                self._mf_map[catalysis.controlled.uid] = xref.id                
                 
                 
     def _process_bp(self, xrefs)->Term:         
@@ -90,6 +98,16 @@ class ReactomeParser(BiopaxParser):
             small_mols.append(small_mol)
             
         return small_mols
+    
+    def process_controller(self, sp):
+        if isinstance(sp, pybiopax.biopax.Catalysis):
+            sp_uid = sp.controlled.uid             
+               
+            if isinstance(sp.control_type, list):
+                pass
+            else:            
+                self._control_map[sp_uid].append(sp.control_type)
+        
     
     def _process_cc(self, xrefs): 
         pass

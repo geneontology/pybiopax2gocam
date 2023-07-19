@@ -16,6 +16,7 @@ class Pathway:
 @dataclass
 class Reaction:
     uid: Optional[str] = ''
+    control_type: List[str] = field(default_factory=list)
     controller: Optional['Term'] = None
     molecular_function: Optional['Term'] = None
     cellular_component: Optional['Term'] = None
