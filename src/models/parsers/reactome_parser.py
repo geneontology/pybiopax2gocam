@@ -102,11 +102,7 @@ class ReactomeParser(BiopaxParser):
     def process_controller(self, sp):
         if isinstance(sp, pybiopax.biopax.Catalysis):
             sp_uid = sp.controlled.uid             
-               
-            if isinstance(sp.control_type, list):
-                pass
-            else:            
-                self._control_map[sp_uid].append(sp.control_type)
+            self._control_map[sp_uid].append(sp.control_type)
         
     
     def _process_cc(self, xrefs): 
