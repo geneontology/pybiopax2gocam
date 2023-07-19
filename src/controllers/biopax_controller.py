@@ -2,7 +2,7 @@ import argparse
 import os
 from pybiopax.api import model_from_owl_file
 from src.models.mapping_strategy import MappingStrategy
-from src.models.derivation_strategy import DerivationStrategy
+from src.models.transformation_strategy import TransformationStrategyFactory
 from src.models.parsers.parser_factory import ParserFactory
 from src.views.biopax_view import BiopaxView
 from src.views.view_factory import ViewFactory
@@ -12,7 +12,7 @@ class BiopaxController:
     def __init__(self):
         self.parser_factory = ParserFactory()
         self.mapping_strategy = MappingStrategy()
-        self.derivation_strategy = DerivationStrategy()
+        self.transformation_strategy_factory = TransformationStrategyFactory()
         self.view_factory = ViewFactory()
 
     def process_biopax_files(self, parser_type, path, view_type='json'):
@@ -30,8 +30,8 @@ class BiopaxController:
             return
 
         mapped_data = self.mapping_strategy.execute(biopax_data)
-        derived_data = self.derivation_strategy.execute(mapped_data)
-        self.view = self.view_factory.create_view(view_type, derived_data)
+        transformed_data = self.transformation_strategy_factory.create_transformation_strategy(parser_type).execute(mapped_data)
+        self.view = self.view_factory.create_view(view_type, transformed_data)
         self.view.convert()
         self.view.display_results()
 
