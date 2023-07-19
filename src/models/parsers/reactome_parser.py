@@ -3,23 +3,22 @@ import pybiopax
 from src.models.biopax_model import Biopax, Pathway, Reaction, Term
 from src.models.parsers.biopax_parser import BiopaxParser
 
-
 class ReactomeParser(BiopaxParser):    
     def __init__(self, model):
         self.bp_node = None
         self.mf_map = {}
         super().__init__(model)          
         
-    def parse(self):
-        
+    def parse(self):        
         pathways = list()
+        
         for pathway in self.model.get_objects_by_type(pybiopax.biopax.Pathway):
             pathways.append(self._process_pathway(pathway))
             
         return Biopax(pathways=pathways)
+    
 
-    def _process_pathway(self, bpx_pathway):        
-        
+    def _process_pathway(self, bpx_pathway):         
         pathway = Pathway(uid = bpx_pathway.uid)
         
         if bpx_pathway.xref:
@@ -37,9 +36,10 @@ class ReactomeParser(BiopaxParser):
     def _process_step_processes(self, step_processes):
         for obj in step_processes:
             pc = self.model.objects[obj.uid]
+            
             for sp in pc.step_process:
                 if isinstance(sp, pybiopax.biopax.Catalysis) and sp.control_type == 'ACTIVATION':
-                    self.process_mf(sp.xref, self.model.objects[sp.uid])
+                    self._process_mf(sp.xref, self.model.objects[sp.uid])
    
     
     def _process_components(self, reaction:Reaction, components):
@@ -68,14 +68,13 @@ class ReactomeParser(BiopaxParser):
         return reactions
     
                                     
-    def process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
+    def _process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
         for xref in xrefs:
             if xref.db == 'GENE ONTOLOGY':
                 self.mf_map[catalysis.controlled.uid] = xref.id                
                 
                 
-    def _process_bp(self, xrefs)->Term:
-         
+    def _process_bp(self, xrefs)->Term:         
         for xref in xrefs:
             if xref.db == 'GENE ONTOLOGY':
                 return Term(id = xref.id)
@@ -85,6 +84,7 @@ class ReactomeParser(BiopaxParser):
 
     def _process_mols(self, mols)->typing.List[Term]:
         small_mols = list()
+        
         for mol in mols:
             small_mol = Term(id=mol.display_name)
             small_mols.append(small_mol)

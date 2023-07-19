@@ -6,6 +6,7 @@ class JSONView(BiopaxView):
     def __init__(self, model):
         super().__init__(model)
         self.json_obj = self.to_json(model)
+        
     def to_json(self, obj):
         return json.dumps(asdict(obj), indent=2)
         

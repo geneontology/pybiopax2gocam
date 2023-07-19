@@ -50,9 +50,13 @@ class BiopaxController:
 
 
 def main():
+    parser_type_choices=['yeast', 'reactome']
+    view_type_choices=['gocamgen', 'json', 'yaml', 'vis']
     parser = argparse.ArgumentParser(description="BioPAX Parser")
-    parser.add_argument('-t', dest='parser_type', required=True, help="Parser type (e.g., yeast, reactome)")
-    parser.add_argument('-v', dest='view_type', required=True, help="View type (e.g., gocamgen, json)")
+    parser.add_argument('-t', dest='parser_type', required=True, 
+                        choices=parser_type_choices, type=str, help="Parser type (e.g., yeast, reactome)")
+    parser.add_argument('-v', dest='view_type', required=True, 
+                        choices=view_type_choices, help="View type (gocamgen, json, yaml, vis)")
     parser.add_argument('-i', dest='biopax_path', required=True, help="File or Folder containing BioPAX file(s)")
    
     args = parser.parse_args()

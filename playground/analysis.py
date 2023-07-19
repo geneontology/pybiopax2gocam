@@ -11,8 +11,8 @@ def main():
    
     model = pybiopax.model_from_owl_file(bp_file, encoding="utf8")
 
-    source_obj = model.objects['Pathway1']
-    target_obj = model.objects['Protein27']
+    source_obj = model.objects['Pathway2']
+    target_obj = model.objects['Protein17']
 
     memo.clear()
     path = find_path_components(source_obj, target_obj)
