@@ -41,7 +41,6 @@ class Relationship:
     
     
 @dataclass
-class Controller (Term):
+class Controller(Term):
     relation: Optional[str] = None
-    something_to_denote_object_id: Optional[str] = None
     

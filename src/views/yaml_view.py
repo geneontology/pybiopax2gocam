@@ -39,7 +39,7 @@ class YamlView(BiopaxView):
             }
 
             bp = {
-                "bp": [pathway.biological_process.id] if pathway.biological_process else []
+                "bp": pathway.biological_process.id
             }
             min_pathway[pathway.uid].append(bp)
 
@@ -54,8 +54,11 @@ class YamlView(BiopaxView):
                 }
 
                 slim_controller = {
-                    "control_type": [reaction.control_type] if reaction.control_type else [],
-                    "controller": [reaction.controller.id] if reaction.controller else []
+                    "control_type": reaction.control_type if reaction.control_type else '',
+                    "controller": [
+                        reaction.controller.id,
+                        reaction.controller.relation
+                    ]
                 }
                 slim_reaction[reaction.uid].append(slim_controller)
 

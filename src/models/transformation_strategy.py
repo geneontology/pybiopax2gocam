@@ -51,6 +51,5 @@ class ReactomeTransformationStrategy(TransformationStrategy):
                                 rel_type = IS_SMALL_MOLECULE_INHIBITOR_OF
                            
                             c.relation = rel_type
-                            c.something_to_denote_object_id = rxn.molecular_function.instance_id
                         
         return changed_data
