@@ -43,11 +43,10 @@ class ReactomeParser(BiopaxParser):
             pc = self.model.objects[obj.uid]
             
             for sp in pc.step_process:
-                self.process_controller(sp)
-                if isinstance(sp, pybiopax.biopax.Catalysis):
-                    
-                    if sp.control_type == 'ACTIVATION':                    
-                        self._process_mf(sp.xref, self.model.objects[sp.uid])
+                if isinstance(sp, Catalysis) or isinstance(sp, Control): 
+                    self._process_controllers(sp)
+                if isinstance(sp, Catalysis):
+                    self._process_mfs(sp, self.model.objects[sp.uid])
    
     
     def _process_components(self, reaction:Reaction, components):
@@ -78,10 +77,11 @@ class ReactomeParser(BiopaxParser):
         return reactions
     
                                     
-    def _process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
-        for xref in xrefs:
-            if xref.db == 'GENE ONTOLOGY':
-                self._mf_map[catalysis.controlled.uid] = xref.id                
+    def _process_mfs(self, sp, catalysis:Catalysis):                              
+        if sp.control_type == 'ACTIVATION':    
+            for xref in sp.xref:
+                if xref.db == 'GENE ONTOLOGY':
+                    self._mf_map[catalysis.controlled.uid] = xref.id                
                 
                 
     def _process_bp(self, xrefs)->Term:         
@@ -95,29 +95,23 @@ class ReactomeParser(BiopaxParser):
     def _process_mols(self, mols)->typing.List[Term]:
         small_mols = list()
         
-        for mol in mols:
-            small_mol = Term(id=mol.display_name)
+        for mol in mols:            
+            xrefs = [f'{v.db}:{v.id}' for v in mol.xref if v.db.lower() in ACCEPTED_DBS]            
+            small_mol = Term(id=ReactomeParser.choose_entity(xrefs),
+                            label=mol.display_name) 
             small_mols.append(small_mol)
             
         return small_mols
     
     
-    def process_controller(self, sp):
-        if isinstance(sp, Catalysis) or isinstance(sp, Control): 
-            sp_uid = sp.controlled.uid    
-            for controller in ReactomeParser.get_object_list(sp.controller):                  
-                controller_item = self.process_controller_label(controller, sp.control_type)
-                self._controller_map[sp_uid].append(controller_item)        
-
-    def process_controller_label(self, controller, control_type): 
-        
-        xref = [f'{v.db}:{v.id}' for v in controller.xref if v.db.lower() in ACCEPTED_DBS]
-            
-        controller = Controller(control_type = control_type, 
-                                id=ReactomeParser.choose_entity(xref),
-                                label=controller.display_name)
-        
-        return controller    
+    def _process_controllers(self, sp):
+        sp_uid = sp.controlled.uid    
+        for controller in ReactomeParser.get_object_list(sp.controller):                  
+            xrefs = [f'{v.db}:{v.id}' for v in controller.xref if v.db.lower() in ACCEPTED_DBS]            
+            controller_item = Controller(control_type = sp.control_type, 
+                            id=ReactomeParser.choose_entity(xrefs),
+                            label=controller.display_name)
+            self._controller_map[sp_uid].append(controller_item)     
     
         
     def _process_cc(self, xrefs): 

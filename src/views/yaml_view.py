@@ -27,6 +27,9 @@ class YamlView(BiopaxView):
         else:
             return json_obj
         
+    def get_ids(self, entity_list):
+        return [f'{entity.id} - {entity.label}' for entity in entity_list]
+        
         
     def _to_minimal_json(self, model: Biopax):
         disp_data = {
@@ -50,23 +53,23 @@ class YamlView(BiopaxView):
 
             for reaction in pathway.reactions:
                 disp_reaction = {
-                    reaction.uid: []
+                    reaction.uid: [
+                        {
+                            "mf": reaction.molecular_function.id
+                        }
+                    ]
+                }               
+
+                list_entities = {
+                    "controllers": reaction.controllers,
+                    "inputs": reaction.has_inputs,
+                    "outputs": reaction.has_outputs
                 }
 
-                disp_controller = {
-                   "controllers": [c.id for c in reaction.controllers]
-                }
-                disp_reaction[reaction.uid].append(disp_controller)
-
-                disp_inputs = {
-                    "inputs": [input_term.id for input_term in reaction.has_inputs]
-                }
-                disp_reaction[reaction.uid].append(disp_inputs)
-
-                disp_outputs = {
-                    "outputs": [output_term.id for output_term in reaction.has_outputs]
-                }
-                disp_reaction[reaction.uid].append(disp_outputs)
+                for k, v in list_entities.items():
+                    disp_entity = {k: self.get_ids(v)}
+                    disp_reaction[reaction.uid].append(disp_entity)
+                
 
                 disp_reactions["reactions"].append(disp_reaction)
 
