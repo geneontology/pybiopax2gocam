@@ -41,6 +41,6 @@ class Relationship:
     
 @dataclass
 class Controller(Term):
-    control_type: List[str] = field(default_factory=list)
+    control_type: Optional[str] = None
     relation: Optional[str] = None
     
