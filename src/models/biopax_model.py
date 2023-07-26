@@ -15,9 +15,8 @@ class Pathway:
 
 @dataclass
 class Reaction:
-    uid: Optional[str] = ''
-    control_type: List[str] = field(default_factory=list)
-    controller: Optional['Controller'] = None
+    uid: Optional[str] = ''   
+    controllers: List['Controller'] = field(default_factory=list)
     molecular_function: Optional['Term'] = None
     cellular_component: Optional['Term'] = None
     has_inputs: List['Term'] = field(default_factory=list)
@@ -42,5 +41,6 @@ class Relationship:
     
 @dataclass
 class Controller(Term):
+    control_type: List[str] = field(default_factory=list)
     relation: Optional[str] = None
     

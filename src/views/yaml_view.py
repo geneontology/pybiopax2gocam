@@ -10,8 +10,8 @@ class YamlView(BiopaxView):
         
     def to_yaml(self, model):
         #clean_json = self._clean_json(asdict(obj))
-        min_json = self._to_minimal_json(model)
-        return yaml.dump(min_json, indent=2)     
+        disp_json = self._to_minimal_json(model)
+        return yaml.dump(disp_json, indent=2)     
         
     def convert(self):
         pass
@@ -29,53 +29,49 @@ class YamlView(BiopaxView):
         
         
     def _to_minimal_json(self, model: Biopax):
-        slim_data = {
+        disp_data = {
             "pathways": []
         }
 
         for pathway in model.pathways:
-            min_pathway = {
+            disp_pathway = {
                 pathway.uid: []
             }
 
             bp = {
                 "bp": pathway.biological_process.id
             }
-            min_pathway[pathway.uid].append(bp)
+            disp_pathway[pathway.uid].append(bp)
 
-            slim_reactions = {
+            disp_reactions = {
                 "reactions": []
             }
-            min_pathway[pathway.uid].append(slim_reactions)
+            disp_pathway[pathway.uid].append(disp_reactions)
 
             for reaction in pathway.reactions:
-                slim_reaction = {
+                disp_reaction = {
                     reaction.uid: []
                 }
 
-                slim_controller = {
-                    "control_type": reaction.control_type if reaction.control_type else '',
-                    "controller": [
-                        reaction.controller.id,
-                        reaction.controller.relation
-                    ]
+                disp_controller = {
+                   "controllers": [c.id for c in reaction.controllers]
                 }
-                slim_reaction[reaction.uid].append(slim_controller)
+                disp_reaction[reaction.uid].append(disp_controller)
 
-                slim_inputs = {
+                disp_inputs = {
                     "inputs": [input_term.id for input_term in reaction.has_inputs]
                 }
-                slim_reaction[reaction.uid].append(slim_inputs)
+                disp_reaction[reaction.uid].append(disp_inputs)
 
-                slim_outputs = {
+                disp_outputs = {
                     "outputs": [output_term.id for output_term in reaction.has_outputs]
                 }
-                slim_reaction[reaction.uid].append(slim_outputs)
+                disp_reaction[reaction.uid].append(disp_outputs)
 
-                slim_reactions["reactions"].append(slim_reaction)
+                disp_reactions["reactions"].append(disp_reaction)
 
-            slim_data["pathways"].append(min_pathway)
+            disp_data["pathways"].append(disp_pathway)
 
-        return slim_data
+        return disp_data
 
   

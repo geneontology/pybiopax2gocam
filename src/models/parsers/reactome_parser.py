@@ -1,14 +1,17 @@
 import typing
 import pybiopax
+from pybiopax.biopax import Catalysis, Control, BioPaxObject
 from collections import defaultdict
-from src.models.biopax_model import Biopax, Pathway, Reaction, Term
+from src.models.biopax_model import Biopax, Controller, Pathway, Reaction, Term
 from src.models.parsers.biopax_parser import BiopaxParser
+
+ACCEPTED_DBS = ['reactome', 'uniprot',  'chebi']
 
 class ReactomeParser(BiopaxParser):    
     def __init__(self, model):
         self._bp_node = None
         self._mf_map = {}
-        self._control_map = defaultdict(list)
+        self._controller_map = defaultdict(list)
         super().__init__(model)          
         
     def parse(self):        
@@ -59,8 +62,7 @@ class ReactomeParser(BiopaxParser):
           
                                    
             reaction = Reaction(uid=bpx_reaction.uid)  
-            reaction.control_type = self._control_map.get(bpx_reaction.uid, None)
-            reaction.controller = Term(id=bpx_reaction.display_name)
+            reaction.controllers = self._controller_map.get(bpx_reaction.uid, [])
             reaction.molecular_function = Term(id = mf_id)
            
             pc = self.model.objects[bpx_reaction.uid]
@@ -99,13 +101,42 @@ class ReactomeParser(BiopaxParser):
             
         return small_mols
     
-    def process_controller(self, sp):
-        if isinstance(sp, pybiopax.biopax.Catalysis):
-            sp_uid = sp.controlled.uid             
-            self._control_map[sp_uid].append(sp.control_type)
-        
     
+    def process_controller(self, sp):
+        if isinstance(sp, Catalysis) or isinstance(sp, Control): 
+            sp_uid = sp.controlled.uid    
+            for controller in ReactomeParser.get_object_list(sp.controller):                  
+                controller_item = self.process_controller_label(controller, sp.control_type)
+                self._controller_map[sp_uid].append(controller_item)        
+
+    def process_controller_label(self, controller, control_type): 
+        
+        xref = [f'{v.db}:{v.id}' for v in controller.xref if v.db.lower() in ACCEPTED_DBS]
+            
+        controller = Controller(control_type = control_type, 
+                                id=ReactomeParser.choose_entity(xref),
+                                label=controller.display_name)
+        
+        return controller    
+    
+        
     def _process_cc(self, xrefs): 
         pass
 
+
+    # Helpers, we can moove these to util class
+    @staticmethod 
+    def get_object_list(val):
+        if isinstance(val, BioPaxObject):
+            return [val]
+        elif isinstance(val, (list, set)):
+            return [v for v in val if isinstance(v, BioPaxObject)]
+        else:
+            return []
     
+    @staticmethod 
+    def choose_entity(a):
+        for item in a:
+            if item.lower().startswith('chebi'):
+                return item
+        return a[0]
