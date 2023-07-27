@@ -42,7 +42,7 @@ class ReactomeTransformationStrategy(TransformationStrategy):
                         c_entity_type = c.id
                         # Really this should be 'if c_entity_type is descendant of chemical entity CHEBI:24431  but not
                         # descendant of nucleic acid CHEBI:33696'. For now, just see if 'CHEBI:'
-                        if c_entity_type.startswith("CHEBI:"):
+                        if c_entity_type.lower().startswith("chebi:"):
                             # Also figure out if + or - from ControlType
                             rel_type = IS_SMALL_MOLECULE_REGULATOR_OF
                             if c.control_type == "ACTIVATION":
