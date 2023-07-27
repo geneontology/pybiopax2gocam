@@ -17,6 +17,7 @@ class Pathway:
 class Reaction:
     uid: Optional[str] = ''   
     controllers: List['Controller'] = field(default_factory=list)
+    gene_product: Optional['Term'] = None
     molecular_function: Optional['Term'] = None
     cellular_component: Optional['Term'] = None
     has_inputs: List['Term'] = field(default_factory=list)
