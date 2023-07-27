@@ -1,3 +1,4 @@
+import re
 import typing
 import pybiopax
 from pybiopax.biopax import Catalysis, Control, BioPaxObject
@@ -96,7 +97,7 @@ class ReactomeParser(BiopaxParser):
         small_mols = list()
         
         for mol in mols:            
-            xrefs = [f'{v.db}:{v.id}' for v in mol.xref if v.db.lower() in ACCEPTED_DBS]            
+            xrefs = self._process_xrefs(mol)        
             small_mol = Term(id=ReactomeParser.choose_entity(xrefs),
                             label=mol.display_name) 
             small_mols.append(small_mol)
@@ -107,7 +108,7 @@ class ReactomeParser(BiopaxParser):
     def _process_controllers(self, sp):
         sp_uid = sp.controlled.uid    
         for controller in ReactomeParser.get_object_list(sp.controller):                  
-            xrefs = [f'{v.db}:{v.id}' for v in controller.xref if v.db.lower() in ACCEPTED_DBS]            
+            xrefs = self._process_xrefs(controller)          
             controller_item = Controller(control_type = sp.control_type, 
                             id=ReactomeParser.choose_entity(xrefs),
                             label=controller.display_name)
@@ -117,6 +118,15 @@ class ReactomeParser(BiopaxParser):
     def _process_cc(self, xrefs): 
         pass
 
+    def _process_xrefs(self, entity):
+        all_xrefs = entity.xref[:]        
+        # We should not use and check attribute but use is isinstanceof to avoid bad biopax
+        if hasattr(entity, 'entity_reference') and entity.entity_reference:
+            all_xrefs.extend(entity.entity_reference.xref)
+
+        xrefs = [f'{v.db}:{ReactomeParser.clean_id(v.id)}' for v in all_xrefs if v.db.lower() in ACCEPTED_DBS]
+        return xrefs
+        
 
     # Helpers, we can moove these to util class
     @staticmethod 
@@ -134,3 +144,10 @@ class ReactomeParser(BiopaxParser):
             if item.lower().startswith('chebi'):
                 return item
         return a[0]
+    
+    @staticmethod
+    def clean_id(id):
+        # just realize some values have db CHEBI and id CHEBI:1234 aghhh
+        clean_id = re.sub('^.*?:', '', id)
+        
+        return clean_id
