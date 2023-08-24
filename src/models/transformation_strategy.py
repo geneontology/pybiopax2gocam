@@ -37,18 +37,19 @@ class ReactomeTransformationStrategy(TransformationStrategy):
         changed_data = data
         for pathway in data.pathways:
             for rxn in pathway.reactions:
-                if isinstance(rxn.controller, list):  # We should remove this conditional after changing dataclass
-                    for c in rxn.controller:
-                        c_entity_type = c.control_entity.type
+                if isinstance(rxn.controllers, list):  # We should remove this conditional after changing dataclass
+                    for c in rxn.controllers:
+                        c_entity_type = c.id
                         # Really this should be 'if c_entity_type is descendant of chemical entity CHEBI:24431  but not
                         # descendant of nucleic acid CHEBI:33696'. For now, just see if 'CHEBI:'
-                        if c_entity_type.startswith("CHEBI:"):
+                        if c_entity_type.lower().startswith("chebi:"):
                             # Also figure out if + or - from ControlType
                             rel_type = IS_SMALL_MOLECULE_REGULATOR_OF
                             if c.control_type == "ACTIVATION":
                                 rel_type = IS_SMALL_MOLECULE_ACTIVATOR_OF
                             elif c.control_type == "INHIBITION":
                                 rel_type = IS_SMALL_MOLECULE_INHIBITOR_OF
-                            relationship = Relationship(c.control_entity.instance_id, rxn.molecular_function.instance_id, rel_type)
-                            pathway.relationships.append(relationship)
+                           
+                            c.relation = rel_type
+                        
         return changed_data

@@ -1,14 +1,18 @@
+import re
 import typing
 import pybiopax
+from pybiopax.biopax import Catalysis, Control, BioPaxObject
 from collections import defaultdict
-from src.models.biopax_model import Biopax, Pathway, Reaction, Term
+from src.models.biopax_model import Biopax, Controller, Pathway, Reaction, Term
 from src.models.parsers.biopax_parser import BiopaxParser
+
+ACCEPTED_DBS = ['reactome', 'uniprot',  'chebi']
 
 class ReactomeParser(BiopaxParser):    
     def __init__(self, model):
         self._bp_node = None
         self._mf_map = {}
-        self._control_map = defaultdict(list)
+        self._controller_map = defaultdict(list)
         super().__init__(model)          
         
     def parse(self):        
@@ -40,11 +44,10 @@ class ReactomeParser(BiopaxParser):
             pc = self.model.objects[obj.uid]
             
             for sp in pc.step_process:
-                self.process_controller(sp)
-                if isinstance(sp, pybiopax.biopax.Catalysis):
-                    
-                    if sp.control_type == 'ACTIVATION':                    
-                        self._process_mf(sp.xref, self.model.objects[sp.uid])
+                if isinstance(sp, Catalysis) or isinstance(sp, Control): 
+                    self._process_controllers(sp)
+                if isinstance(sp, Catalysis):
+                    self._process_mfs(sp, self.model.objects[sp.uid])
    
     
     def _process_components(self, reaction:Reaction, components):
@@ -59,8 +62,7 @@ class ReactomeParser(BiopaxParser):
           
                                    
             reaction = Reaction(uid=bpx_reaction.uid)  
-            reaction.control_type = self._control_map.get(bpx_reaction.uid, None)
-            reaction.controller = Term(id=bpx_reaction.display_name)
+            reaction.controllers = self._controller_map.get(bpx_reaction.uid, [])
             reaction.molecular_function = Term(id = mf_id)
            
             pc = self.model.objects[bpx_reaction.uid]
@@ -76,10 +78,11 @@ class ReactomeParser(BiopaxParser):
         return reactions
     
                                     
-    def _process_mf(self, xrefs, catalysis:pybiopax.biopax.Catalysis): 
-        for xref in xrefs:
-            if xref.db == 'GENE ONTOLOGY':
-                self._mf_map[catalysis.controlled.uid] = xref.id                
+    def _process_mfs(self, sp, catalysis:Catalysis):                              
+        if sp.control_type == 'ACTIVATION':    
+            for xref in sp.xref:
+                if xref.db == 'GENE ONTOLOGY':
+                    self._mf_map[catalysis.controlled.uid] = xref.id                
                 
                 
     def _process_bp(self, xrefs)->Term:         
@@ -93,19 +96,58 @@ class ReactomeParser(BiopaxParser):
     def _process_mols(self, mols)->typing.List[Term]:
         small_mols = list()
         
-        for mol in mols:
-            small_mol = Term(id=mol.display_name)
+        for mol in mols:            
+            xrefs = self._process_xrefs(mol)        
+            small_mol = Term(id=ReactomeParser.choose_entity(xrefs),
+                            label=mol.display_name) 
             small_mols.append(small_mol)
             
         return small_mols
     
-    def process_controller(self, sp):
-        if isinstance(sp, pybiopax.biopax.Catalysis):
-            sp_uid = sp.controlled.uid             
-            self._control_map[sp_uid].append(sp.control_type)
-        
     
+    def _process_controllers(self, sp):
+        sp_uid = sp.controlled.uid    
+        for controller in ReactomeParser.get_object_list(sp.controller):                  
+            xrefs = self._process_xrefs(controller)          
+            controller_item = Controller(control_type = sp.control_type, 
+                            id=ReactomeParser.choose_entity(xrefs),
+                            label=controller.display_name)
+            self._controller_map[sp_uid].append(controller_item)     
+    
+        
     def _process_cc(self, xrefs): 
         pass
 
+    def _process_xrefs(self, entity):
+        all_xrefs = entity.xref[:]        
+        # We should not use and check attribute but use is isinstanceof to avoid bad biopax
+        if hasattr(entity, 'entity_reference') and entity.entity_reference:
+            all_xrefs.extend(entity.entity_reference.xref)
+
+        xrefs = [f'{v.db}:{ReactomeParser.clean_id(v.id)}' for v in all_xrefs if v.db.lower() in ACCEPTED_DBS]
+        return xrefs
+        
+
+    # Helpers, we can moove these to util class
+    @staticmethod 
+    def get_object_list(val):
+        if isinstance(val, BioPaxObject):
+            return [val]
+        elif isinstance(val, (list, set)):
+            return [v for v in val if isinstance(v, BioPaxObject)]
+        else:
+            return []
     
+    @staticmethod 
+    def choose_entity(a):
+        for item in a:
+            if item.lower().startswith('chebi'):
+                return item
+        return a[0]
+    
+    @staticmethod
+    def clean_id(id):
+        # just realize some values have db CHEBI and id CHEBI:1234 aghhh
+        clean_id = re.sub('^.*?:', '', id)
+        
+        return clean_id

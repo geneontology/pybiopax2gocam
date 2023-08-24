@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "GO:0019120-1", "is_anchor": null, "label": "GO:0019120-1", "shape": "dot", "size": 10, "sparql_var": "GO_0019120_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-9011584-1", "label": "Reactome:R-HSA-9011584-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_9011584_1"}, {"color": "#97c2fc", "id": "ChEBI:16856-1", "label": "ChEBI:16856-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_16856_1"}, {"color": "#97c2fc", "id": "ChEBI:28240-1", "label": "ChEBI:28240-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_28240_1"}, {"color": "#97c2fc", "id": "GO:0010510-1", "label": "GO:0010510-1", "shape": "dot", "size": 10, "sparql_var": "GO_0010510_1"}, {"color": "#97c2fc", "id": "ChEBI:15377-1", "label": "ChEBI:15377-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_15377_1"}, {"color": "#97c2fc", "id": "ChEBI:28240-2", "label": "ChEBI:28240-2", "shape": "dot", "size": 10, "sparql_var": "ChEBI_28240_2"}, {"color": "#97c2fc", "id": "ChEBI:16891-1", "label": "ChEBI:16891-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_16891_1"}, {"color": "#97c2fc", "id": "ChEBI:17883-1", "label": "ChEBI:17883-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_17883_1"}, {"color": "#97c2fc", "id": "GO:0004740-1", "is_anchor": null, "label": "GO:0004740-1", "shape": "dot", "size": 10, "sparql_var": "GO_0004740_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-203947-1", "label": "Reactome:R-HSA-203947-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_203947_1"}, {"color": "#97c2fc", "id": "ChEBI:57945-1", "label": "ChEBI:57945-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_57945_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-9011531-2", "label": "Reactome:R-HSA-9011531-2", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_9011531_2"}, {"color": "#97c2fc", "id": "ChEBI:57288-1", "label": "ChEBI:57288-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_57288_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-5634107-1", "label": "Reactome:R-HSA-5634107-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_5634107_1"}, {"color": "#97c2fc", "id": "ChEBI:15361-1", "label": "ChEBI:15361-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_15361_1"}, {"color": "#97c2fc", "id": "ChEBI:30616-1", "label": "ChEBI:30616-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_30616_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-70070-1", "label": "Reactome:R-HSA-70070-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_70070_1"}, {"color": "#97c2fc", "id": "ChEBI:456216-1", "label": "ChEBI:456216-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_456216_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-210342-1", "label": "Reactome:R-HSA-210342-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_210342_1"}, {"color": "#97c2fc", "id": "GO:0004741-1", "is_anchor": true, "label": "GO:0004741-1", "shape": "dot", "size": 10, "sparql_var": "GO_0004741_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-204219-1", "label": "Reactome:R-HSA-204219-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_204219_1"}, {"color": "#97c2fc", "id": "ChEBI:18420-1", "label": "ChEBI:18420-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_18420_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-210342-2", "label": "Reactome:R-HSA-210342-2", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_210342_2"}, {"color": "#97c2fc", "id": "ChEBI:15377-2", "label": "ChEBI:15377-2", "shape": "dot", "size": 10, "sparql_var": "ChEBI_15377_2"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-70070-2", "label": "Reactome:R-HSA-70070-2", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_70070_2"}, {"color": "#97c2fc", "id": "ChEBI:43474-1", "label": "ChEBI:43474-1", "shape": "dot", "size": 10, "sparql_var": "ChEBI_43474_1"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-203943-1", "label": "Reactome:R-HSA-203943-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_203943_1"}, {"color": "#97c2fc", "id": "ChEBI:28240-3", "label": "ChEBI:28240-3", "shape": "dot", "size": 10, "sparql_var": "ChEBI_28240_3"}, {"color": "#97c2fc", "id": "Reactome:R-HSA-9011531-1", "label": "Reactome:R-HSA-9011531-1", "shape": "dot", "size": 10, "sparql_var": "Reactome_R_HSA_9011531_1"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": "black", "from": "GO:0019120-1", "relation": null, "to": "Reactome:R-HSA-9011584-1", "width": 1}, {"arrows": "to", "color": "pink", "from": "GO:0019120-1", "relation": "RO:0012005", "to": "ChEBI:16856-1", "width": 1}, {"arrows": "to", "color": "pink", "from": "GO:0019120-1", "relation": "RO:0012006", "to": "ChEBI:28240-1", "width": 1}, {"arrows": "to", "color": "brown", "from": "GO:0019120-1", "relation": "BFO:0000050", "to": "GO:0010510-1", "width": 1}, {"arrows": "to", "color": "lightblue", "from": "GO:0019120-1", "relation": "RO:0002233", "to": "ChEBI:15377-1", "width": 1}, {"arrows": "to", "color": "lightblue", "from": "GO:0019120-1", "relation": "RO:0002233", "to": "ChEBI:28240-2", "width": 1}, {"arrows": "to", "color": "#FFC0CB", "from": "GO:0019120-1", "relation": "RO:0002234", "to": "ChEBI:16891-1", "width": 1}, {"arrows": "to", "color": "#FFC0CB", "from": "GO:0019120-1", "relation": "RO:0002234", "to": "ChEBI:17883-1", "width": 1}, {"arrows": "to", "color": "black", "from": "GO:0004740-1", "relation": null, "to": "Reactome:R-HSA-203947-1", "width": 1}, {"arrows": "to", "color": "pink", "from": "GO:0004740-1", "relation": "RO:0012005", "to": "ChEBI:57945-1", "width": 1}, {"arrows": "to", "color": "black", "from": "GO:0004740-1", "relation": null, "to": "Reactome:R-HSA-9011531-2", "width": 1}, {"arrows": "to", "color": "pink", "from": "GO:0004740-1", "relation": "RO:0012005", "to": "ChEBI:57288-1", "width": 1}, {"arrows": "to", "color": "black", "from": "GO:0004740-1", "relation": null, "to": "Reactome:R-HSA-5634107-1", "width": 1}, {"arrows": "to", "color": "pink", "from": "GO:0004740-1", "relation": "RO:0012006", "to": "ChEBI:15361-1", "width": 1}, {"arrows": "to", "color": "brown", "from": "GO:0004740-1", "relation": "BFO:0000050", "to": "GO:0010510-1", "width": 1}, {"arrows": "to", "color": "lightblue", "from": "GO:0004740-1", "relation": "RO:0002233", "to": "ChEBI:30616-1", "width": 1}, {"arrows": "to", "color": "lightblue", "from": "GO:0004740-1", "relation": "RO:0002233", "to": "Reactome:R-HSA-70070-1", "width": 1}, {"arrows": "to", "color": "#FFC0CB", "from": "GO:0004740-1", "relation": "RO:0002234", "to": "ChEBI:456216-1", "width": 1}, {"arrows": "to", "color": "#FFC0CB", "from": "GO:0004740-1", "relation": "RO:0002234", "to": "Reactome:R-HSA-210342-1", "width": 1}, {"arrows": "to", "color": "black", "from": "GO:0004741-1", "relation": null, "to": "Reactome:R-HSA-204219-1", "width": 1}, {"arrows": "to", "color": "pink", "from": "GO:0004741-1", "relation": "RO:0012005", "to": "ChEBI:18420-1", "width": 1}, {"arrows": "to", "color": "brown", "from": "GO:0004741-1", "relation": "BFO:0000050", "to": "GO:0010510-1", "width": 1}, {"arrows": "to", "color": "lightblue", "from": "GO:0004741-1", "relation": "RO:0002233", "to": "Reactome:R-HSA-210342-2", "width": 1}, {"arrows": "to", "color": "lightblue", "from": "GO:0004741-1", "relation": "RO:0002233", "to": "ChEBI:15377-2", "width": 1}, {"arrows": "to", "color": "#FFC0CB", "from": "GO:0004741-1", "relation": "RO:0002234", "to": "Reactome:R-HSA-70070-2", "width": 1}, {"arrows": "to", "color": "#FFC0CB", "from": "GO:0004741-1", "relation": "RO:0002234", "to": "ChEBI:43474-1", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

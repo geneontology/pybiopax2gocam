@@ -20,7 +20,7 @@ class VisView(BiopaxView):
 
         g.from_nx(gocamGraph)
         for edge in g.edges:
-            edge['color'] = find_relation_meta(edge['relation'])['color']
+            edge['color'] = find_relation_meta(edge['relation'])['color'] if edge['relation'] else 'black'
         
         #downloads a local untracked folder
         display(g.show('nx.html', notebook=False))
