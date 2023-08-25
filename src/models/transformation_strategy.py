@@ -1,5 +1,5 @@
 from src.models.processing_strategy import ProcessingStrategy
-from src.models.biopax_model import Relationship
+from src.models import biopax_model
 
 
 IS_SMALL_MOLECULE_REGULATOR_OF = "RO:0012004"
@@ -9,7 +9,7 @@ IS_SMALL_MOLECULE_INHIBITOR_OF = "RO:0012006"
 
 class TransformationStrategyFactory(ProcessingStrategy):
     @staticmethod
-    def create_transformation_strategy(parser_type):
+    def create_transformation_strategy(parser_type: str):
         if parser_type == "reactome":
             return ReactomeTransformationStrategy()
         # TODO: elif parser_type == "yeast":
@@ -17,23 +17,23 @@ class TransformationStrategyFactory(ProcessingStrategy):
 
 
 class TransformationStrategy(ProcessingStrategy):
-    def execute(self, data):
+    def execute(self, data: biopax_model.Biopax):
         #raise NotImplementedError
         return data
 
 
 class ReactomeTransformationStrategy(TransformationStrategy):
-    def execute(self, data):
+    def execute(self, data: biopax_model.Biopax):
         new_data = self._infer_transport_process(data)
         new_data = self._infer_small_molecule_regulators(data)
         return new_data
 
-    def _infer_transport_process(self, data):
+    def _infer_transport_process(self, data: biopax_model.Biopax):
         changed_data = data
         # raise NotImplementedError
         return changed_data
 
-    def _infer_small_molecule_regulators(self, data):
+    def _infer_small_molecule_regulators(self, data: biopax_model.Biopax):
         changed_data = data
         for pathway in data.pathways:
             for rxn in pathway.reactions:

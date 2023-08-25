@@ -5,3 +5,4 @@ ontobio
 tabulate
 linkml
 pyvis
+pydantic
